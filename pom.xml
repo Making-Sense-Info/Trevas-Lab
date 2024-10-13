@@ -26,6 +26,9 @@
         <jackson.version>2.15.2</jackson.version>
         <jakarta-servlet.version>4.0.3</jakarta-servlet.version>
         <jersey.version>2.36</jersey.version>
+        <maven.compiler.release/>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
     </properties>
 
     <dependencyManagement>
@@ -227,6 +230,7 @@
                 <version>3.3.1</version>
                 <configuration>
                     <argLine>--add-exports java.base/sun.nio.ch=ALL-UNNAMED</argLine>
+                    <argLine>-XX:+EnableDynamicAgentLoading</argLine>
                 </configuration>
             </plugin>
             <plugin>
