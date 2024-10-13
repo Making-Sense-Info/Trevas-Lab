@@ -1,12 +1,26 @@
-auth:
-  mode: "NONE"
 spark:
   master: "local"
+
+app:
+  security:
+    enabled: false
+
 spring:
   security:
     oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: ""
+      login-page: "/oauth2/authorization/myclient"
+      client:
+        registration:
+          myclient:
+            client-id: your-client-id
+            client-secret: your-client-secret
+            scope: openid,profile,email
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            client-name: My OIDC Client
+            provider: myprovider
+        provider:
+          myprovider:
+            issuer-uri: https://accounts.google.com  # Par exemple Google ou un autre fournisseur OIDC
+
 jwt:
   username-claim: "preferred_username"
