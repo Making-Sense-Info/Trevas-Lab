@@ -6,8 +6,8 @@ import fr.insee.trevas.lab.model.*;
 import fr.insee.trevas.lab.service.InMemoryEngine;
 import fr.insee.trevas.lab.service.SparkEngine;
 import fr.insee.vtl.prov.ProvenanceListener;
-import fr.insee.vtl.prov.RDFUtils;
 import fr.insee.vtl.prov.prov.Program;
+import fr.insee.vtl.prov.utils.RDFUtils;
 import org.apache.jena.rdf.model.Model;
 import org.apache.spark.sql.SparkSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,7 +71,8 @@ public class TrevasLabController {
         String id = body.getId();
         String name = body.getName();
         String script = body.getScript();
-        Program program = ProvenanceListener.run(script, id, name);
+        Map<String, S3ForBindings> bindings = body.getBindings();
+        Program program = sparkEngine.getProgram(script, id, name, bindings);
         Model model = RDFUtils.buildModel(program);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(RDFUtils.serialize(model, "JSON-LD"));

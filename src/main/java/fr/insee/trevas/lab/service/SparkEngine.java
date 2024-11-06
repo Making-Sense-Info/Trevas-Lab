@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.insee.trevas.lab.model.*;
 import fr.insee.trevas.lab.utils.Utils;
 import fr.insee.vtl.model.Structured;
+import fr.insee.vtl.prov.ProvenanceListener;
+import fr.insee.vtl.prov.prov.Program;
 import fr.insee.vtl.spark.SparkDataset;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -215,6 +217,25 @@ public class SparkEngine {
         editVisualize.setDataPoints(trevasDs.getDataAsList());
         return ResponseEntity.status(HttpStatus.OK)
                 .body(editVisualize);
+    }
+
+    public Program getProgram(String script, String id, String name, Map<String, S3ForBindings> bindings) {
+        SparkSession spark = buildSparkSession();
+        Bindings b = new SimpleBindings();
+        if (bindings != null) {
+            bindings.forEach((k, v) -> {
+                try {
+                    SparkDataset sparkDataset = readS3Dataset(spark, v, 0);
+                    b.put(k, sparkDataset);
+                } catch (Exception e) {
+                    logger.warn("S3 loading failed: ", e);
+
+                }
+            });
+        }
+
+        ScriptEngine engine = Utils.initEngineWithSpark(b, spark);
+        return ProvenanceListener.runWithBindings(engine, script, id, name);
     }
 
 }
