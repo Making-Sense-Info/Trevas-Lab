@@ -5,7 +5,6 @@ import fr.insee.trevas.lab.configuration.security.UserProvider;
 import fr.insee.trevas.lab.model.*;
 import fr.insee.trevas.lab.service.InMemoryEngine;
 import fr.insee.trevas.lab.service.SparkEngine;
-import fr.insee.vtl.prov.ProvenanceListener;
 import fr.insee.vtl.prov.prov.Program;
 import fr.insee.vtl.prov.utils.RDFUtils;
 import org.apache.jena.rdf.model.Model;
@@ -19,10 +18,12 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.script.Bindings;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/vtl")
@@ -120,11 +121,14 @@ public class TrevasLabController {
     }
 
     @GetMapping("/job/{jobId}/bindings")
-    public Bindings getJobBinding(@PathVariable UUID jobId) {
+    public List<String> getJobBinding(@PathVariable UUID jobId) {
         if (!jobs.containsKey(jobId)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-        return jobs.get(jobId).bindings;
+        return jobs.get(jobId).bindings.keySet()
+                .stream().filter(b -> b.contains("$PersistentDataset"))
+                .map(b -> b.replace("$PersistentDataset", ""))
+                .collect(Collectors.toList());
     }
 
     // TODO: Move to service.

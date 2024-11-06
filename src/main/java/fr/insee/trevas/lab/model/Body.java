@@ -12,6 +12,8 @@ public class Body {
     private Map<String, S3ForBindings> s3ForBindings;
     private ToSave toSave;
 
+    private String writePath;
+
     public Map<String, S3ForBindings> getS3ForBindings() {
         return s3ForBindings;
     }
@@ -58,5 +60,13 @@ public class Body {
 
     public void setQueriesForBindingsToSave(Map<String, QueriesForBindingsToSave> queriesForBindingsToSave) {
         this.queriesForBindingsToSave = queriesForBindingsToSave;
+    }
+
+    public String getWritePath() {
+        return writePath;
+    }
+
+    public void setWritePath(String writePath) {
+        this.writePath = writePath;
     }
 }

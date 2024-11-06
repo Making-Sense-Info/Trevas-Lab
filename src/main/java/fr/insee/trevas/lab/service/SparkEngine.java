@@ -3,6 +3,7 @@ package fr.insee.trevas.lab.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.insee.trevas.lab.model.*;
 import fr.insee.trevas.lab.utils.Utils;
+import fr.insee.vtl.model.PersistentDataset;
 import fr.insee.vtl.model.Structured;
 import fr.insee.vtl.prov.ProvenanceListener;
 import fr.insee.vtl.prov.prov.Program;
@@ -10,10 +11,7 @@ import fr.insee.vtl.spark.SparkDataset;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.spark.SparkConf;
-import org.apache.spark.sql.DataFrameReader;
-import org.apache.spark.sql.Dataset;
-import org.apache.spark.sql.Row;
-import org.apache.spark.sql.SparkSession;
+import org.apache.spark.sql.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.http.HttpStatus;
@@ -162,7 +160,18 @@ public class SparkEngine {
             Utils.writeSparkS3Datasets(outputBindings, s3ToSave, objectMapper, spark);
         }
 
-        return Utils.getSparkBindings(outputBindings, 100);
+        String writePath = body.getWritePath();
+        outputBindings.forEach((key, value) -> {
+            if (value instanceof PersistentDataset) {
+                String dsName = key.replace("$PersistentDataset", "");
+                SparkDataset ds = (SparkDataset) ((PersistentDataset) value).getDelegate();
+                ds.getSparkDataset().write()
+                        .mode(SaveMode.Overwrite)
+                        .parquet(writePath + "/" + dsName);
+            }
+        });
+
+        return Utils.getSparkBindings(outputBindings, 0);
     }
 
     public ResponseEntity<EditVisualize> getJDBC(
