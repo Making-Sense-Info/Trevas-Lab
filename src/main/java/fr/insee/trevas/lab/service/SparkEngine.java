@@ -244,7 +244,11 @@ public class SparkEngine {
         }
 
         ScriptEngine engine = Utils.initEngineWithSpark(b, spark);
-        return ProvenanceListener.runWithBindings(engine, script, id, name);
+        try {
+            return ProvenanceListener.runWithBindings(engine, script, id, name);
+        } catch (Exception e) {
+            return ProvenanceListener.run(script, id, name);
+        }
     }
 
 }
