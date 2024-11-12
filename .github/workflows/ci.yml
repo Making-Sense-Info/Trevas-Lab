@@ -17,7 +17,7 @@ jobs:
           java-version: 21
           distribution: "adopt"
       - name: Set current version
-        run: mvn -B versions:set -DnewVersion=${GITHUB_REF##*/} -DprocessAllModules -DgenerateBackupPoms=false
+        run: mvn -B versions:set -DnewVersion=${GITHUB_REF#refs/tags/} -DprocessAllModules -DgenerateBackupPoms=false
       - uses: s4u/maven-settings-action@v3.0.0
         with:
           githubServer: false
@@ -38,6 +38,7 @@ jobs:
   docker:
     needs: build
     runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
     steps:
       - uses: actions/checkout@v4
       - name: Download artifact
