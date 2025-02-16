@@ -36,7 +36,7 @@ public class SparkEngine {
     @Autowired
     private ObjectMapper objectMapper;
 
-    private SparkSession buildSparkSession() {
+    public SparkSession buildSparkSession() {
         SparkConf conf = Utils.loadSparkConfig(System.getenv("SPARK_CONF_DIR"));
         conf.set("spark.driver.allowMultipleContexts", "true");
         // Note: all the dependencies are required for deserialization.

@@ -44,6 +44,19 @@ public class TrevasLabController {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @GetMapping("check")
+    public ResponseEntity<String> check() {
+        try (SparkSession sparkSession = sparkEngine.buildSparkSession()) {
+            if (sparkSession != null && !sparkSession.sparkContext().isStopped()) {
+                return ResponseEntity.ok("Spark Session is available and running.");
+            } else {
+                return ResponseEntity.status(500).body("Spark Session is not available.");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error checking Spark Session: " + e.getMessage());
+        }
+    }
+
     @PostMapping("/connect")
     public ResponseEntity<EditVisualize> getDataFromConnector(
             Authentication auth,
