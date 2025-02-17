@@ -4,3 +4,11 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 Java API to consume [Trevas engine](https://github.com/InseeFr/Trevas).
+
+## Build and run
+
+```shell
+mvn package
+cd target
+java --add-exports java.base/sun.nio.ch=ALL-UNNAMED -jar trevas-lab-1.1.0.jar
+```
