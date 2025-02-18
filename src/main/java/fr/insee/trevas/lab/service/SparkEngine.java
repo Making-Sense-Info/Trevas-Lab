@@ -42,11 +42,11 @@ public class SparkEngine {
         // Note: all the dependencies are required for deserialization.
         // See https://stackoverflow.com/questions/28079307
         conf.set("spark.jars", String.join(",",
-                "/vtl-spark.jar",
-                "/vtl-model.jar",
-                "/vtl-parser.jar",
-                "/vtl-engine.jar",
-                "/vtl-jackson.jar"
+                "./lib/vtl-spark.jar",
+                "./lib/vtl-model.jar",
+                "./lib/vtl-parser.jar",
+                "./lib/vtl-engine.jar",
+                "./lib/vtl-jackson.jar"
         ));
         SparkSession.Builder sparkBuilder = SparkSession.builder()
                 .appName("trevas-lab");
